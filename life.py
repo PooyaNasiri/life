@@ -3,23 +3,35 @@ import tkinter as tk
 from tkcalendar import Calendar
 
 
+def center_window(window, width, height):
+    x = int((window.winfo_screenwidth() / 2) - (width / 2))
+    y = int((window.winfo_screenheight() / 2) - (height / 2) - 100)
+    s = f"{width}x{height}" + f"+{int(x)}+{int(0 if y < 0 else y)}"
+    window.geometry(s)
+
+
 def display_life_calendar(year, month, day, lifespan):
     years_lived = int((datetime.date.today() -
-                       datetime.date(year, month, day)).days / 365.0)
+                       datetime.date(year, month, day)).days / 365.2425)
     weeks_lived = int(((datetime.date.today() -
-                        datetime.date(year, month, day)).days % 365.0) // 7)
+                        datetime.date(year, month, day)).days % 365.2425) // 7)
     square_size = 10
     space_size = 1.2
     root = tk.Tk()
+    w = int(52 * square_size * space_size + 55)
+    h = int(lifespan * square_size * space_size + 4)
     root.title("Life Calendar")
-    canvas = tk.Canvas(root, width=52 * square_size * space_size + 4,
-                       height=lifespan * square_size * space_size + 4)
+    canvas = tk.Canvas(root, width=w, height=h)
     canvas.pack()
+    center_window(root, w, h)
+    root.resizable(False, False)
     for i in range(lifespan):
+        canvas.create_text(2, (i * square_size * space_size +
+                           2 + square_size / 2), text=f"Year {i+1}", anchor="w")
         for j in range(52):
-            x = j * square_size * space_size + 2
+            x = j * square_size * space_size + 50
             y = i * square_size * space_size + 2
-            t = (i < years_lived - 1) or (i == years_lived and j < weeks_lived)
+            t = (i < years_lived) or (i == years_lived and j < weeks_lived)
             canvas.create_rectangle(x, y, x + square_size, y + square_size, fill=(
                 "black" if t else "white"), outline="black")
     root.mainloop()
@@ -43,7 +55,8 @@ def on_date_selected():
 
 root = tk.Tk()
 root.title("Life Calendar")
-root.geometry("265x280")
+center_window(root, 265, 280)
+root.resizable(False, False)
 pad = 7
 
 label = tk.Label(root, text="Select Your Birthdate")
