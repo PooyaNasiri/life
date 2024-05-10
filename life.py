@@ -8,6 +8,7 @@ def center_window(window, width, height):
     y = int((window.winfo_screenheight() / 2) - (height / 2) - 100)
     s = f"{width}x{height}" + f"+{int(x)}+{int(0 if y < 0 else y)}"
     window.geometry(s)
+    window.resizable(False, False)
 
 
 def display_life_calendar(year, month, day, lifespan):
@@ -18,8 +19,8 @@ def display_life_calendar(year, month, day, lifespan):
     square_size = 10
     space_size = 1.2
     root = tk.Tk()
-    w = int(52 * square_size * space_size + 55)
-    h = int(lifespan * square_size * space_size + 4)
+    w = int(52 * square_size * space_size + 48)
+    h = int(lifespan * square_size * space_size + 20)
     root.title("Life Calendar")
     canvas = tk.Canvas(root, width=w, height=h)
     canvas.pack()
@@ -27,10 +28,13 @@ def display_life_calendar(year, month, day, lifespan):
     root.resizable(False, False)
     for i in range(lifespan):
         canvas.create_text(2, (i * square_size * space_size +
-                           2 + square_size / 2), text=f"Year {i+1}", anchor="w")
+                           17 + square_size / 2), text=f"Year {i+1}", anchor="w")
         for j in range(52):
-            x = j * square_size * space_size + 50
-            y = i * square_size * space_size + 2
+            if i == 0:
+                canvas.create_text(
+                    (j * square_size * space_size + square_size / 2 + 38), 10, text=f"{j+1}", anchor="w", fill='gray' if j % 2 == 1 else 'black')
+            x = j * square_size * space_size + 44
+            y = i * square_size * space_size + 17
             t = (i < years_lived) or (i == years_lived and j < weeks_lived)
             canvas.create_rectangle(x, y, x + square_size, y + square_size, fill=(
                 "black" if t else "white"), outline="black")
@@ -56,9 +60,7 @@ def on_date_selected():
 root = tk.Tk()
 root.title("Life Calendar")
 center_window(root, 265, 280)
-root.resizable(False, False)
 pad = 7
-
 label = tk.Label(root, text="Select Your Birthdate")
 label.grid(row=0, column=0, padx=pad, pady=pad)
 date_picker = Calendar(root, selectmode="day", year=1996,
