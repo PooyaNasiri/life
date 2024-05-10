@@ -4,8 +4,10 @@ from tkcalendar import Calendar
 
 
 def display_life_calendar(year, month, day, lifespan):
-    weeks_lived = (datetime.date.today() -
-                   datetime.date(year, month, day)).days // 7
+    years_lived = int((datetime.date.today() -
+                       datetime.date(year, month, day)).days / 365.0)
+    weeks_lived = int(((datetime.date.today() -
+                        datetime.date(year, month, day)).days % 365.0) // 7)
     square_size = 10
     space_size = 1.2
     root = tk.Tk()
@@ -17,8 +19,9 @@ def display_life_calendar(year, month, day, lifespan):
         for j in range(52):
             x = j * square_size * space_size + 2
             y = i * square_size * space_size + 2
+            t = (i < years_lived - 1) or (i == years_lived and j < weeks_lived)
             canvas.create_rectangle(x, y, x + square_size, y + square_size, fill=(
-                "black" if i * 52 + j < weeks_lived else "white"), outline="black")
+                "black" if t else "white"), outline="black")
     root.mainloop()
 
 
